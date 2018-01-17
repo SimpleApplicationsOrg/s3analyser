@@ -8,5 +8,6 @@ type Bucket struct {
 }
 
 type S3 interface {
-	ListBuckets() (*[]Bucket, error)
+	ListBuckets() ([]*Bucket, error)
 }
+

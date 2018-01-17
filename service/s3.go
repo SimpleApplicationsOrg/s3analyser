@@ -10,7 +10,7 @@ type svc struct {
 	*service.S3
 }
 
-func (svc *svc) ListBuckets() (*[]model.Bucket, error) {
+func (svc *svc) ListBuckets() ([]*model.Bucket, error) {
 
 	req := svc.ListBucketsRequest(&service.ListBucketsInput{})
 
@@ -19,12 +19,12 @@ func (svc *svc) ListBuckets() (*[]model.Bucket, error) {
 		return nil, err
 	}
 
-	buckets := make([]model.Bucket, len(resp.Buckets))
+	buckets := make([]*model.Bucket, len(resp.Buckets))
 	for i, bucket := range resp.Buckets {
-		buckets[i] = model.Bucket{Name: bucket.Name, CreationDate: bucket.CreationDate}
+		buckets[i] = &model.Bucket{Name: bucket.Name, CreationDate: bucket.CreationDate}
 	}
 
-	return &buckets, nil
+	return buckets, nil
 }
 
 func S3Factory(config aws.Config) model.S3 {

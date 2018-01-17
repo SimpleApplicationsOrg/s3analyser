@@ -27,7 +27,10 @@ func main() {
 
 	s3 := service.S3Factory(cfg)
 
-	result := analyser.Analyse(s3)
+	result, err := analyser.Analyse(s3)
+	if err != nil {
+		panic("unable to analyse s3, " + err.Error())
+	}
 
 	analyser.Print(result)
 
