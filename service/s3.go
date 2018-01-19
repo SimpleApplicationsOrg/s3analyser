@@ -1,16 +1,24 @@
 package service
 
 import (
-	service "github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/SimpleApplicationsOrg/s3analyser/model"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	service "github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 type svc struct {
 	*service.S3
 }
 
-func (svc *svc) ListBuckets() ([]*model.Bucket, error) {
+type S3 interface {
+	Objects(filter model.FilterMap) ([]*model.ObjectData, error)
+}
+
+func S3Factory(config aws.Config) S3 {
+	return &svc{service.New(config)}
+}
+
+func (svc *svc) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
 
 	req := svc.ListBucketsRequest(&service.ListBucketsInput{})
 
@@ -19,14 +27,75 @@ func (svc *svc) ListBuckets() ([]*model.Bucket, error) {
 		return nil, err
 	}
 
-	buckets := make([]*model.Bucket, len(resp.Buckets))
-	for i, bucket := range resp.Buckets {
-		buckets[i] = &model.Bucket{Name: bucket.Name, CreationDate: bucket.CreationDate}
+	var objects []*model.ObjectData
+
+	for _, bucket := range resp.Buckets {
+
+		if _, ok := filter[*bucket.Name]; !ok && len(filter) > 0 {
+			continue
+		}
+
+		objs, err := svc.bucketObjects(&bucket, filter[*bucket.Name])
+		if err != nil {
+			return nil, err
+		}
+		objects = append(objects, objs...)
 	}
 
-	return buckets, nil
+	return objects, nil
 }
 
-func S3Factory(config aws.Config) model.S3 {
-	return &svc{service.New(config)}
+func (svc *svc) bucketObjects(bucket *service.Bucket, prefix string) ([]*model.ObjectData, error) {
+
+	region := svc.getRegion(bucket.Name)
+
+	svc.Config.Region = region
+
+	var objects []*model.ObjectData
+
+	err := svc.ListObjectsPages(&service.ListObjectsInput{Bucket: bucket.Name, Prefix: &prefix},
+		func(page *service.ListObjectsOutput, morePages bool) bool {
+
+			if len(page.Contents) == 0 {
+				return false
+			}
+
+			slice := slice(page, bucket, region)
+
+			objects = append(objects, slice...)
+
+			return true
+		})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return objects, nil
+}
+
+func (svc *svc) getRegion(bucketName *string) string {
+
+	req := svc.GetBucketLocationRequest(&service.GetBucketLocationInput{Bucket: bucketName})
+	req.Handlers.Unmarshal.PushBackNamed(service.NormalizeBucketLocationHandler)
+	resp, err := req.Send()
+
+	if err != nil {
+		return ""
+	}
+
+	return string(resp.LocationConstraint)
+
+}
+
+func slice(page *service.ListObjectsOutput, bucket *service.Bucket, region string) []*model.ObjectData {
+
+	slice := make([]*model.ObjectData, len(page.Contents))
+	for i, obj := range page.Contents {
+		storage := string(obj.StorageClass)
+		slice[i] = &model.ObjectData{Bucket: bucket.Name, CreationDate: bucket.CreationDate, Region: &region, Key: obj.Key,
+			LastModified: obj.LastModified, Size: obj.Size, StorageClass: &storage}
+	}
+
+	return slice
 }

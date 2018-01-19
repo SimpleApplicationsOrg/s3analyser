@@ -2,36 +2,46 @@ package main
 
 import (
 	"flag"
-	"os"
-	"github.com/aws/aws-sdk-go-v2/aws/external"
-	"github.com/SimpleApplicationsOrg/s3analyser/service"
+	"fmt"
 	"github.com/SimpleApplicationsOrg/s3analyser/analyser"
+	"github.com/SimpleApplicationsOrg/s3analyser/model"
+	"github.com/SimpleApplicationsOrg/s3analyser/service"
+	"github.com/aws/aws-sdk-go-v2/aws/external"
+	"os"
 )
-
-func init() {
-	profile := flag.String("profile", "", "Get credentials for profile in ~/.aws/credentials")
-
-	flag.Parse()
-
-	if profile != nil {
-		os.Setenv(external.AWSProfileEnvVar, *profile)
-	}
-}
 
 func main() {
 
+	profile := flag.String("profile", "", "Get credentials for profile in ~/.aws/credentials")
+	size := flag.String("size", "KB", "KB, MB, GB, TB")
+	withStorage := flag.Bool("withStorage", false, "Organize by Storage Class")
+	byRegion := flag.Bool("byRegion", false, "Group by Region")
+
+	var filter model.FilterMap
+	flag.Var(&filter, "filter", "List of bucket names to filter")
+
+	flag.Parse()
+
+	if *profile != "" {
+		os.Setenv(external.AWSProfileEnvVar, *profile)
+	}
+
 	cfg, err := external.LoadDefaultAWSConfig()
 	if err != nil {
-		panic("unable to load config, " + err.Error())
+		fmt.Fprintf(os.Stderr, "Unable to load config, %v\n", err)
+		os.Exit(1)
 	}
 
 	s3 := service.S3Factory(cfg)
 
-	result, err := analyser.Analyse(s3)
+	s3Analyser := analyser.Factory(*byRegion, *withStorage, filter, *size)
+
+	result, err := s3Analyser.Analyse(s3)
 	if err != nil {
-		panic("unable to analyse s3, " + err.Error())
+		fmt.Fprintf(os.Stderr, "Unable to analyse s3, %v\n", err)
+		os.Exit(1)
 	}
 
-	analyser.Print(result)
+	s3Analyser.Print(result)
 
 }
