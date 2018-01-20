@@ -47,7 +47,7 @@ func (sat *sat) Analyse(s3 service.S3) (*Result, error) {
 
 		if _, ok := result[key]; !ok {
 			result[key] = &model.ObjectData{Bucket: obj.Bucket, CreationDate: obj.CreationDate, Region: obj.Region,
-				Key: &blank, LastModified: obj.LastModified, Count: &zero, Size: &zero64, StorageClass: obj.StorageClass}
+				LastModified: obj.LastModified, Count: &zero, Size: &zero64, StorageClass: obj.StorageClass}
 		}
 
 		object := result[key]

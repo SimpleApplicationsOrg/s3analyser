@@ -15,11 +15,11 @@ type formatLine func(data model.ObjectData) string
 // Prints the analyze result
 func (sat *sat) Print(result *Result) {
 
-	h := headerFactory().bucket(sat.size)
+	h := bucketHeaderBuilder(sat.size)
 	formatFunction := sat.formatBucket
 
 	if sat.byRegion {
-		h = h.region(sat.size)
+		h = regionHeaderBuilder(sat.size)
 		formatFunction = sat.formatRegion
 	}
 
@@ -27,8 +27,26 @@ func (sat *sat) Print(result *Result) {
 		h = h.withStorage()
 	}
 
-	print(result, h.string(), formatFunction)
+	print(result, h.build(), formatFunction)
 
+}
+
+func (sat *sat) formatRegion(data model.ObjectData) string {
+	return fmt.Sprintf("%s\t%d\t%.f\t%s\t%s\t%s",
+		*data.Region, *data.Count, sizeCalc(*data.Size, sat.size), data.CreationDate.String(),
+		data.LastModified.String(), *data.StorageClass)
+}
+
+func (sat *sat) formatBucket(data model.ObjectData) string {
+	return fmt.Sprintf("%s\t%s\t%d\t%.f\t%s\t%s\t%s",
+		*data.Bucket, *data.Region, *data.Count, sizeCalc(*data.Size, sat.size), data.CreationDate.String(),
+		data.LastModified.String(), *data.StorageClass)
+}
+
+func sizeCalc(size int64, format string) float64 {
+	pow := sizeFormat[format]
+	div := math.Pow(float64(1024), float64(pow))
+	return float64(size) / div
 }
 
 func print(result *Result, header string, format formatLine) {
@@ -45,46 +63,4 @@ func print(result *Result, header string, format formatLine) {
 
 	w.Flush()
 
-}
-
-type header string
-
-func headerFactory() header {
-	return header("")
-}
-
-func (h header) string() string {
-	return string(h)
-}
-
-func (h header) bucket(size string) header {
-	bucketHeader := fmt.Sprintf("Name\tRegion\tCount\tTotal (%s)\tCreation\tLast Modified", size)
-	return header(bucketHeader)
-}
-
-func (h header) region(size string) header {
-	regionHeader := fmt.Sprintf("Region\tCount\tTotal (%s)\tCreation\tLast Modified", size)
-	return header(regionHeader)
-}
-
-func (h header) withStorage() header {
-	return header(h.string() + "\tStorage")
-}
-
-func (sat *sat) formatRegion(data model.ObjectData) string {
-	return fmt.Sprintf("%s\t%d\t%.f\t%s\t%s\t%s",
-		*data.Region, *data.Count, sizeCalcul(*data.Size, sat.size), data.CreationDate.String(),
-		data.LastModified.String(), *data.StorageClass)
-}
-
-func (sat *sat) formatBucket(data model.ObjectData) string {
-	return fmt.Sprintf("%s\t%s\t%d\t%.f\t%s\t%s\t%s",
-		*data.Bucket, *data.Region, *data.Count, sizeCalcul(*data.Size, sat.size), data.CreationDate.String(),
-		data.LastModified.String(), *data.StorageClass)
-}
-
-func sizeCalcul(size int64, format string) float64 {
-	pow := sizeFormat[format]
-	div := math.Pow(float64(1024), float64(pow))
-	return float64(size) / div
 }

@@ -22,7 +22,7 @@ func (i *FilterMap) Set(value string) error {
 		parts := strings.Split(dt, "/")
 		key := parts[0]
 
-		aux[key] = strings.Join(parts[1:],"/")
+		aux[key] = strings.Join(parts[1:], "/")
 	}
 	*i = FilterMap(aux)
 	return nil

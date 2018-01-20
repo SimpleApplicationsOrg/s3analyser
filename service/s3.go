@@ -8,6 +8,7 @@ import (
 
 type svc struct {
 	*service.S3
+	s3Operations
 }
 
 // S3 is used to access all s3 objects
@@ -17,27 +18,23 @@ type S3 interface {
 
 // S3Factory creates a S3 service using aws configuration. ~/.aws/credentials, environment variables, ...
 func S3Factory(config aws.Config) S3 {
-	return &svc{service.New(config)}
+	return &svc{service.New(config), &operations{}}
 }
 
 // List all objects from S3 using the filter
 func (svc *svc) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
+	o := svc.s3Operations
 
-	req := svc.ListBucketsRequest(&service.ListBucketsInput{})
-
-	resp, err := req.Send()
+	buckets, err := o.listBuckets(*svc)
 	if err != nil {
 		return nil, err
 	}
 
 	var objects []*model.ObjectData
-
-	for _, bucket := range resp.Buckets {
-
+	for _, bucket := range buckets {
 		if _, ok := filter[*bucket.Name]; !ok && len(filter) > 0 {
 			continue
 		}
-
 		objs, err := svc.bucketObjects(&bucket, filter[*bucket.Name])
 		if err != nil {
 			return nil, err
@@ -49,56 +46,30 @@ func (svc *svc) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
 }
 
 func (svc *svc) bucketObjects(bucket *service.Bucket, prefix string) ([]*model.ObjectData, error) {
+	o := svc.s3Operations
 
-	region := svc.getRegion(bucket.Name)
-
+	region, err := o.getRegion(*svc, *bucket.Name)
+	if err != nil {
+		return nil, err
+	}
 	svc.Config.Region = region
 
-	var objects []*model.ObjectData
-
-	err := svc.ListObjectsPages(&service.ListObjectsInput{Bucket: bucket.Name, Prefix: &prefix},
-		func(page *service.ListObjectsOutput, morePages bool) bool {
-
-			if len(page.Contents) == 0 {
-				return false
-			}
-
-			slice := slice(page, bucket, region)
-
-			objects = append(objects, slice...)
-
-			return true
-		})
-
+	s3Objects, err := o.listObjects(*svc, *bucket.Name, prefix)
 	if err != nil {
 		return nil, err
 	}
 
-	return objects, nil
+	return convert(s3Objects, bucket, region), nil
 }
 
-func (svc *svc) getRegion(bucketName *string) string {
+func convert(objects []service.Object, bucket *service.Bucket, region string) []*model.ObjectData {
 
-	req := svc.GetBucketLocationRequest(&service.GetBucketLocationInput{Bucket: bucketName})
-	req.Handlers.Unmarshal.PushBackNamed(service.NormalizeBucketLocationHandler)
-	resp, err := req.Send()
-
-	if err != nil {
-		return ""
-	}
-
-	return string(resp.LocationConstraint)
-
-}
-
-func slice(page *service.ListObjectsOutput, bucket *service.Bucket, region string) []*model.ObjectData {
-
-	slice := make([]*model.ObjectData, len(page.Contents))
-	for i, obj := range page.Contents {
+	objDatas := make([]*model.ObjectData, len(objects))
+	for i, obj := range objects {
 		storage := string(obj.StorageClass)
-		slice[i] = &model.ObjectData{Bucket: bucket.Name, CreationDate: bucket.CreationDate, Region: &region, Key: obj.Key,
+		objDatas[i] = &model.ObjectData{Bucket: bucket.Name, CreationDate: bucket.CreationDate, Region: &region, Key: obj.Key,
 			LastModified: obj.LastModified, Size: obj.Size, StorageClass: &storage}
 	}
 
-	return slice
+	return objDatas
 }
