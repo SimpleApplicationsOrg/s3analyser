@@ -9,10 +9,12 @@ var zero = 0
 var zero64 = int64(zero)
 var blank = ""
 
+// Result has the analysis result
 type Result struct {
 	Objects map[string]*model.ObjectData
 }
 
+// S3Analyser is used to analyze s3 objects and print the result
 type S3Analyser interface {
 	Analyse(s3 service.S3) (*Result, error)
 	Print(result *Result)
@@ -25,10 +27,12 @@ type sat struct {
 	size        string
 }
 
+// Factory creates the analyzer with the configuration flags
 func Factory(byRegion bool, withStorage bool, filter model.FilterMap, size string) S3Analyser {
 	return &sat{byRegion, withStorage, filter, size}
 }
 
+// Analyze s3 buckets
 func (sat *sat) Analyse(s3 service.S3) (*Result, error) {
 
 	objects, err := s3.Objects(sat.filter)

@@ -12,6 +12,7 @@ var sizeFormat = map[string]int64{"KB": 1, "MB": 2, "GB": 3, "TB": 4}
 
 type formatLine func(data model.ObjectData) string
 
+// Prints the analyze result
 func (sat *sat) Print(result *Result) {
 
 	h := headerFactory().bucket(sat.size)

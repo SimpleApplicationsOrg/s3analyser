@@ -5,12 +5,14 @@ import (
 	"strings"
 )
 
+// FilterMap is used to keep filter information
 type FilterMap map[string]string
 
 func (i *FilterMap) String() string {
-	return "filter"
+	return ""
 }
 
+// Set is used to push the list of values into the filter
 func (i *FilterMap) Set(value string) error {
 	if len(*i) > 0 {
 		return errors.New("filter flag already set")

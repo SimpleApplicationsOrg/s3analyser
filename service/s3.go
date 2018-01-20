@@ -10,14 +10,17 @@ type svc struct {
 	*service.S3
 }
 
+// S3 is used to access all s3 objects
 type S3 interface {
 	Objects(filter model.FilterMap) ([]*model.ObjectData, error)
 }
 
+// S3Factory creates a S3 service using aws configuration. ~/.aws/credentials, environment variables, ...
 func S3Factory(config aws.Config) S3 {
 	return &svc{service.New(config)}
 }
 
+// List all objects from S3 using the filter
 func (svc *svc) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
 
 	req := svc.ListBucketsRequest(&service.ListBucketsInput{})
