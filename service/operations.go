@@ -10,7 +10,7 @@ type s3Operations interface {
 	getRegion(svc svc, bucketName string) (string, error)
 }
 
-type operations struct {}
+type operations struct{}
 
 func (o *operations) listBuckets(svc svc) ([]s3.Bucket, error) {
 	req := svc.ListBucketsRequest(&s3.ListBucketsInput{})
@@ -22,7 +22,7 @@ func (o *operations) listBuckets(svc svc) ([]s3.Bucket, error) {
 }
 
 func (o *operations) listObjects(svc svc, bucketName string, prefix string) ([]s3.Object, error) {
-	objects := make([]s3.Object,0)
+	objects := make([]s3.Object, 0)
 	err := svc.ListObjectsPages(&s3.ListObjectsInput{Bucket: &bucketName, Prefix: &prefix},
 		func(page *s3.ListObjectsOutput, morePages bool) bool {
 			if len(page.Contents) == 0 {
@@ -43,4 +43,3 @@ func (o *operations) getRegion(svc svc, bucketName string) (string, error) {
 	}
 	return string(resp.LocationConstraint), nil
 }
-

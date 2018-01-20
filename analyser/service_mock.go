@@ -1,10 +1,10 @@
 package analyser
 
 import (
+	"errors"
 	"github.com/SimpleApplicationsOrg/s3analyser/model"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"time"
-	"errors"
 )
 
 var bucketNameMock = "test"
@@ -29,15 +29,13 @@ var objectResultMock = &model.ObjectData{Bucket: &bucketNameMock,
 	CreationDate: &creationDateMock,
 	LastModified: &lastModifiedMock,
 	StorageClass: &blank,
-	Count: &countMock}
+	Count:        &countMock}
 
-
-var resultBucketMock = &Result{map[string]*model.ObjectData{bucketNameMock:objectResultMock}}
+var resultBucketMock = &Result{map[string]*model.ObjectData{bucketNameMock: objectResultMock}}
 
 type serviceMock struct{}
 
 func (s *serviceMock) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
-
 	return []*model.ObjectData{objectMock}, nil
 }
 

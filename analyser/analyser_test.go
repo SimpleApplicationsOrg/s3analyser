@@ -88,11 +88,11 @@ func Test_sat_key(t *testing.T) {
 		{"When only withStorage is passed, key should return the bucket name and storage as key",
 			fields{false, true, model.FilterMap{}, "KB"},
 			args{*objectMock},
-			bucketNameMock+storageStringMock},
+			bucketNameMock + storageStringMock},
 		{"When byRegion and withStorage are passed, key should return the region and storage as key",
 			fields{true, true, model.FilterMap{}, "KB"},
 			args{*objectMock},
-			regionMock+storageStringMock},
+			regionMock + storageStringMock},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

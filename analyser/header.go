@@ -5,7 +5,7 @@ import "fmt"
 type header string
 
 func bucketHeaderBuilder(size string) header {
-	bucketHeader := "Bucket\t"+regionHeaderBuilder(size)
+	bucketHeader := "Bucket\t" + regionHeaderBuilder(size)
 	return header(bucketHeader)
 }
 
