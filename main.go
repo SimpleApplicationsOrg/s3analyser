@@ -42,6 +42,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	s3Analyser.Print(result)
+	s3Analyser.Print(os.Stdout, result)
 
 }

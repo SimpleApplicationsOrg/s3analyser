@@ -3,6 +3,7 @@ package analyser
 import (
 	"github.com/SimpleApplicationsOrg/s3analyser/model"
 	"github.com/SimpleApplicationsOrg/s3analyser/service"
+	"io"
 )
 
 var zero = 0
@@ -17,7 +18,7 @@ type Result struct {
 // S3Analyser is used to analyze s3 objects and print the result
 type S3Analyser interface {
 	Analyse(s3 service.S3) (*Result, error)
-	Print(result *Result)
+	Print(writer io.Writer, result *Result)
 }
 
 type sat struct {

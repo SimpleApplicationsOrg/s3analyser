@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/SimpleApplicationsOrg/s3analyser/model"
 	"math"
-	"os"
 	"text/tabwriter"
+	"io"
 )
 
 var sizeFormat = map[string]int64{"KB": 1, "MB": 2, "GB": 3, "TB": 4}
@@ -13,7 +13,7 @@ var sizeFormat = map[string]int64{"KB": 1, "MB": 2, "GB": 3, "TB": 4}
 type formatLine func(data model.ObjectData) string
 
 // Prints the analyze result
-func (sat *sat) Print(result *Result) {
+func (sat *sat) Print(writer io.Writer, result *Result) {
 
 	h := bucketHeaderBuilder(sat.size)
 	formatFunction := sat.formatBucket
@@ -27,7 +27,7 @@ func (sat *sat) Print(result *Result) {
 		h = h.withStorage()
 	}
 
-	print(result, h.build(), formatFunction)
+	print(writer, result, h.build(), formatFunction)
 
 }
 
@@ -49,10 +49,10 @@ func sizeCalc(size int64, format string) float64 {
 	return float64(size) / div
 }
 
-func print(result *Result, header string, format formatLine) {
+func print(writer io.Writer, result *Result, header string, format formatLine) {
 	w := new(tabwriter.Writer)
 
-	w.Init(os.Stdout, 0, 0, 2, ' ', 0)
+	w.Init(writer, 0, 0, 2, ' ', 0)
 
 	fmt.Fprintln(w, header)
 

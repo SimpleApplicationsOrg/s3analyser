@@ -8,9 +8,9 @@ import (
 )
 
 var bucketNameMock = "test"
-var creationDateMock = time.Now()
+var creationDateMock = time.Date(2018,time.January, 1, 1, 1, 1, 1, time.UTC)
 var sizeMock = int64(1000)
-var lastModifiedMock = time.Now()
+var lastModifiedMock = time.Date(2018,time.January, 1, 1, 1, 1, 1, time.UTC)
 var regionMock = "us-east-1"
 var storageMock = s3.ObjectStorageClassStandard
 var storageStringMock = string(storageMock)
@@ -31,7 +31,17 @@ var objectResultMock = &model.ObjectData{Bucket: &bucketNameMock,
 	StorageClass: &blank,
 	Count:        &countMock}
 
+var objectResultWithStorageMock = &model.ObjectData{Bucket: &bucketNameMock,
+	Region:       &regionMock,
+	Size:         &sizeMock,
+	CreationDate: &creationDateMock,
+	LastModified: &lastModifiedMock,
+	StorageClass: &storageStringMock,
+	Count:        &countMock}
+
 var resultBucketMock = &Result{map[string]*model.ObjectData{bucketNameMock: objectResultMock}}
+var resultBucketWithStorageMock = &Result{map[string]*model.ObjectData{bucketNameMock: objectResultWithStorageMock}}
+
 
 type serviceMock struct{}
 
