@@ -3,9 +3,9 @@ package analyser
 import (
 	"fmt"
 	"github.com/SimpleApplicationsOrg/s3analyser/model"
+	"io"
 	"math"
 	"text/tabwriter"
-	"io"
 )
 
 var sizeFormat = map[string]int64{"KB": 1, "MB": 2, "GB": 3, "TB": 4}
