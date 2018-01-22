@@ -16,7 +16,7 @@ func init() {
 			"The credentials can be set in the same way as aws-cli. More information on:\n" +
 			"https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html\n" +
 			"https://docs.aws.amazon.com/cli/latest/userguide/cli-environment.html\n\n" +
-			"Usage of s3analyser:\n\n")
+			"Usage:\n")
 		flag.PrintDefaults()
 	}
 }
