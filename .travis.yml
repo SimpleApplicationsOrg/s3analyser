@@ -11,6 +11,7 @@ before_install:
 - sudo add-apt-repository ppa:masterminds/glide -y
 - sudo apt-get update -q
 - sudo apt-get install glide -y
+- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 
 install:
 - glide install
