@@ -10,6 +10,17 @@ import (
 	"os"
 )
 
+func init() {
+	flag.Usage = func() {
+		fmt.Fprint(os.Stderr,"The s3analyser is a tool that shows information about an AWS account s3 buckets.\n" +
+			"The credentials can be set in the same way as aws-cli. More information on:\n" +
+			"https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html\n" +
+			"https://docs.aws.amazon.com/cli/latest/userguide/cli-environment.html\n\n" +
+			"Usage of s3analyser:\n\n")
+		flag.PrintDefaults()
+	}
+}
+
 func main() {
 
 	profile := flag.String("profile", "", "Get credentials for profile in ~/.aws/credentials")
@@ -19,7 +30,6 @@ func main() {
 
 	var filter model.FilterMap
 	flag.Var(&filter, "filter", "List of bucket names to filter")
-
 	flag.Parse()
 
 	if *profile != "" {
@@ -38,7 +48,9 @@ func main() {
 
 	result, err := s3Analyser.Analyse(s3)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to analyse s3, %v\n", err)
+		fmt.Fprintf(os.Stderr, "Unable to analyse s3. "+
+			"Please make sure your credentials are correct set and you have access to AWS.\n"+
+			"%v\n", err)
 		os.Exit(1)
 	}
 
