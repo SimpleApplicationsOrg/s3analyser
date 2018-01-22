@@ -12,10 +12,10 @@ import (
 
 func init() {
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr,"The s3analyser is a tool that shows information about an AWS account s3 buckets.\n" +
-			"The credentials can be set in the same way as aws-cli. More information on:\n" +
-			"https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html\n" +
-			"https://docs.aws.amazon.com/cli/latest/userguide/cli-environment.html\n\n" +
+		fmt.Fprint(os.Stderr, "The s3analyser is a tool that shows information about an AWS account s3 buckets.\n"+
+			"The credentials can be set in the same way as aws-cli. More information on:\n"+
+			"https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html\n"+
+			"https://docs.aws.amazon.com/cli/latest/userguide/cli-environment.html\n\n"+
 			"Usage:\n")
 		flag.PrintDefaults()
 	}
