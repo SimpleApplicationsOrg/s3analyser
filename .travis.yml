@@ -4,6 +4,9 @@ dist: precise
 go:
 - 1.9
 
+services:
+  - docker
+
 before_install:
 - sudo add-apt-repository ppa:masterminds/glide -y
 - sudo apt-get update -q
