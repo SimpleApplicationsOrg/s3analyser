@@ -1,6 +1,9 @@
 version: 2
 jobs:
   build:
+    filters:
+      tags:
+        only: /.*/
     docker:
       - image: circleci/golang:1.8
     working_directory: /go/src/github.com/SimpleApplicationsOrg/s3analyser
