@@ -25,7 +25,5 @@ Usage:
 ### Get the binaries
 The latest binaries can be downloaded from https://github.com/SimpleApplicationsOrg/s3analyser/releases
 
-### Installing with the docker image
-
 ### Using s3analyser
 [![asciicast](https://asciinema.org/a/UolZxtmF7KT4hv0h8wIF8xzIs.png)](https://asciinema.org/a/UolZxtmF7KT4hv0h8wIF8xzIs)
