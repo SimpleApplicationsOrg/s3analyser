@@ -1,9 +1,6 @@
 version: 2
 jobs:
   build:
-    filters:
-      tags:
-        only: /.*/
     docker:
       - image: circleci/golang:1.8
     working_directory: /go/src/github.com/SimpleApplicationsOrg/s3analyser
@@ -22,3 +19,12 @@ jobs:
             docker login -u $DOCKER_SAT_USER -p $DOCKER_SAT_PASSWORD; # (5)
             docker push s3analyser/s3analyser:$CIRCLE_TAG;
           fi
+workflows:
+  version: 2
+  build_docker:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+
