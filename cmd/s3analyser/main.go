@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/SimpleApplicationsOrg/s3analyser/pkg/analyser"
-	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
 	"github.com/SimpleApplicationsOrg/s3analyser/pkg/service"
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"os"
@@ -30,7 +29,7 @@ func main() {
 	withStorage := flag.Bool("withStorage", false, "Organize by Storage Class")
 	byRegion := flag.Bool("byRegion", false, "Group by Region")
 
-	var filter model.FilterMap
+	var filter service.FilterMap
 	flag.Var(&filter, "filter", "List of bucket names to filter")
 	flag.Parse()
 

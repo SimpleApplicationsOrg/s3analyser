@@ -20,7 +20,7 @@ func New(config aws.Config) *Service {
 }
 
 // List all objects from S3 using the filter
-func (s *Service) Objects(filter model.FilterMap) ([]model.ObjectData, error) {
+func (s *Service) Objects(filter FilterMap) ([]model.ObjectData, error) {
 
 	buckets, err := s.listBuckets()
 	if err != nil {

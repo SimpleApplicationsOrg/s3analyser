@@ -24,7 +24,7 @@ func Test_Objects(t *testing.T) {
 		s3Operations s3Operations
 	}
 	type args struct {
-		filter model.FilterMap
+		filter FilterMap
 	}
 	tests := []struct {
 		name    string
@@ -36,13 +36,13 @@ func Test_Objects(t *testing.T) {
 		//Test cases
 		{"When Objects is called it should return the expected list of objects",
 			fields{s3.New(aws.Config{}), &operationsMock{}}, // mocked s3 operations
-			args{model.FilterMap{}},                         // no filter
-			[]model.ObjectData{expectedOject},             // expected list of objects
+			args{FilterMap{}},                 // no filter
+			[]model.ObjectData{expectedOject}, // expected list of objects
 			false}, // no error is expected
 		{"When operation listBuckets fails Objects should return an error",
 			fields{s3.New(aws.Config{}), &operationsErrorMock{}}, // mocked s3 operations with errors
-			args{model.FilterMap{}}, // no filter
-			[]model.ObjectData{},   // no expected result
+			args{FilterMap{}},    // no filter
+			[]model.ObjectData{}, // no expected result
 			true}, // error is expected
 	}
 	for _, tt := range tests {

@@ -23,7 +23,6 @@ func Test_sat_formatRegion(t *testing.T) {
 	type fields struct {
 		byRegion    bool
 		withStorage bool
-		filter      model.FilterMap
 		size        string
 	}
 	type args struct {
@@ -36,7 +35,7 @@ func Test_sat_formatRegion(t *testing.T) {
 		without string
 	}{
 		{"When formatRegion is called the result should not have bucket name",
-			fields{true, false, model.FilterMap{}, "KB"},
+			fields{true, false, "KB"},
 			args{objectResultMock},
 			bucketNameMock},
 	}
@@ -58,7 +57,6 @@ func Test_sat_formatBucket(t *testing.T) {
 	type fields struct {
 		byRegion    bool
 		withStorage bool
-		filter      model.FilterMap
 		size        string
 	}
 	type args struct {
@@ -71,7 +69,7 @@ func Test_sat_formatBucket(t *testing.T) {
 		expect string
 	}{
 		{"When formatRegion is called the result should not have bucket name",
-			fields{true, false, model.FilterMap{}, "KB"},
+			fields{true, false, "KB"},
 			args{objectResultMock},
 			bucketNameMock},
 	}
@@ -125,7 +123,6 @@ func Test_sat_Print(t *testing.T) {
 	type fields struct {
 		byRegion    bool
 		withStorage bool
-		filter      model.FilterMap
 		size        string
 	}
 	type args struct {
@@ -138,19 +135,19 @@ func Test_sat_Print(t *testing.T) {
 		want   string
 	}{
 		{"When Print without flags set, it should print the expected output",
-			fields{false, false, model.FilterMap{}, "KB"},
+			fields{false, false, "KB"},
 			args{resultBucketMock},
 			expectedBucketOutput},
 		{"When Print with byRegion set, it should print the expected output",
-			fields{true, false, model.FilterMap{}, "KB"},
+			fields{true, false, "KB"},
 			args{resultBucketMock},
 			expectedRegionOutput},
 		{"When Print with withStorage set, it should print the expected output",
-			fields{false, true, model.FilterMap{}, "KB"},
+			fields{false, true, "KB"},
 			args{resultBucketWithStorageMock},
 			expectedBucketWithStorageOutput},
 		{"When Print with byRegion and withStorage set, it should print the expected output",
-			fields{true, true, model.FilterMap{}, "KB"},
+			fields{true, true, "KB"},
 			args{resultBucketWithStorageMock},
 			expectedRegionWithStorageOutput},
 	}
