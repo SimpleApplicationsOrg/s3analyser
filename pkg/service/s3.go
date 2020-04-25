@@ -3,24 +3,26 @@ package service
 import (
 	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
 	"github.com/aws/aws-sdk-go-v2/aws"
-	service "github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
+// Service is responsible by the connection to s3 and the operations performed on s3
 type Service struct {
-	*service.Client
+	*s3.Client
 	s3Operations
 }
 
 // New creates a S3 service using aws configuration. ~/.aws/credentials, environment variables, ...
 func New(config aws.Config) *Service {
-	return &Service{service.New(config), &operations{}}
+	s := s3.New(config)
+	o := &operation{s}
+	return &Service{s, o}
 }
 
 // List all objects from S3 using the filter
-func (svc *Service) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
-	o := svc.s3Operations
+func (s *Service) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
 
-	buckets, err := o.listBuckets(*svc)
+	buckets, err := s.listBuckets()
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +32,7 @@ func (svc *Service) Objects(filter model.FilterMap) ([]*model.ObjectData, error)
 		if _, ok := filter[*bucket.Name]; !ok && len(filter) > 0 {
 			continue
 		}
-		objs, err := svc.bucketObjects(&bucket, filter[*bucket.Name])
+		objs, err := s.bucketObjects(&bucket, filter[*bucket.Name])
 		if err != nil {
 			return nil, err
 		}
@@ -40,16 +42,15 @@ func (svc *Service) Objects(filter model.FilterMap) ([]*model.ObjectData, error)
 	return objects, nil
 }
 
-func (svc *Service) bucketObjects(bucket *service.Bucket, prefix string) ([]*model.ObjectData, error) {
-	o := svc.s3Operations
+func (s *Service) bucketObjects(bucket *s3.Bucket, prefix string) ([]*model.ObjectData, error) {
 
-	region, err := o.getRegion(*svc, *bucket.Name)
+	region, err := s.getRegion(*bucket.Name)
 	if err != nil {
 		return nil, err
 	}
-	svc.Config.Region = region
+	s.Config.Region = region
 
-	s3Objects, err := o.listObjects(*svc, *bucket.Name, prefix)
+	s3Objects, err := s.listObjects(*bucket.Name, prefix)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +58,7 @@ func (svc *Service) bucketObjects(bucket *service.Bucket, prefix string) ([]*mod
 	return convert(s3Objects, bucket, region), nil
 }
 
-func convert(objects []service.Object, bucket *service.Bucket, region string) []*model.ObjectData {
+func convert(objects []s3.Object, bucket *s3.Bucket, region string) []*model.ObjectData {
 
 	objDatas := make([]*model.ObjectData, len(objects))
 	for i, obj := range objects {
