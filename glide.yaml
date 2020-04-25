@@ -1,7 +1,0 @@
-package: github.com/SimpleApplicationsOrg/s3analyser
-import:
-- package: github.com/aws/aws-sdk-go-v2
-  subpackages:
-  - aws
-  - aws/external
-  - service/s3

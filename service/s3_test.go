@@ -19,7 +19,7 @@ var expectedOject = model.ObjectData{Bucket: &bucketNameMock,
 
 func Test_svc_Objects(t *testing.T) {
 	type fields struct {
-		S3           *s3.S3
+		S3           *s3.Client
 		s3Operations s3Operations
 	}
 	type args struct {
@@ -47,7 +47,7 @@ func Test_svc_Objects(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			svc := &svc{
-				S3:           tt.fields.S3,
+				Client:           tt.fields.S3,
 				s3Operations: tt.fields.s3Operations,
 			}
 			got, err := svc.Objects(tt.args.filter)
@@ -64,7 +64,7 @@ func Test_svc_Objects(t *testing.T) {
 
 func Test_svc_bucketObjects(t *testing.T) {
 	type fields struct {
-		S3           *s3.S3
+		S3           *s3.Client
 		s3Operations s3Operations
 	}
 	type args struct {
@@ -93,7 +93,7 @@ func Test_svc_bucketObjects(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			svc := &svc{
-				S3:           tt.fields.S3,
+				Client:           tt.fields.S3,
 				s3Operations: tt.fields.s3Operations,
 			}
 			got, err := svc.bucketObjects(tt.args.bucket, tt.args.prefix)

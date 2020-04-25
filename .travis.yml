@@ -1,19 +1,13 @@
 language: go
-sudo: required
-dist: precise
+
 go:
-- 1.9
+- 1.14
 
 before_install:
-- sudo add-apt-repository ppa:masterminds/glide -y
-- sudo apt-get update -q
-- sudo apt-get install glide -y
-
-install:
-- glide install
+- go mod tidy
 
 script:
-- "./go.test.sh"
+- go test ./... -race -coverprofile=coverage.txt -covermode=atomic
 - go build -tags netgo -a -v
 - GOOS=windows GOARCH=amd64 go build -tags netgo -a -v
 

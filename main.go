@@ -33,7 +33,7 @@ func main() {
 	flag.Parse()
 
 	if *profile != "" {
-		os.Setenv(external.AWSProfileEnvVar, *profile)
+		os.Setenv("AWS_PROFILE", *profile)
 	}
 
 	cfg, err := external.LoadDefaultAWSConfig()
