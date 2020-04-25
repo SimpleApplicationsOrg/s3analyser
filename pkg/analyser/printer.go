@@ -13,17 +13,17 @@ var sizeFormat = map[string]int64{"KB": 1, "MB": 2, "GB": 3, "TB": 4}
 type formatLine func(data model.ObjectData) string
 
 // Prints the analyze result
-func (sat *sat) Print(writer io.Writer, result *Result) {
+func (a *Analyser) Print(writer io.Writer, result *Result) {
 
-	h := bucketHeaderBuilder(sat.size)
-	formatFunction := sat.formatBucket
+	h := bucketHeaderBuilder(a.size)
+	formatFunction := a.formatBucket
 
-	if sat.byRegion {
-		h = regionHeaderBuilder(sat.size)
-		formatFunction = sat.formatRegion
+	if a.byRegion {
+		h = regionHeaderBuilder(a.size)
+		formatFunction = a.formatRegion
 	}
 
-	if sat.withStorage {
+	if a.withStorage {
 		h = h.withStorage()
 	}
 
@@ -31,15 +31,15 @@ func (sat *sat) Print(writer io.Writer, result *Result) {
 
 }
 
-func (sat *sat) formatRegion(data model.ObjectData) string {
+func (a *Analyser) formatRegion(data model.ObjectData) string {
 	return fmt.Sprintf("%s\t%d\t%.f\t%s\t%s\t%s",
-		*data.Region, *data.Count, sizeCalc(*data.Size, sat.size), data.CreationDate.String(),
+		*data.Region, *data.Count, sizeCalc(*data.Size, a.size), data.CreationDate.String(),
 		data.LastModified.String(), *data.StorageClass)
 }
 
-func (sat *sat) formatBucket(data model.ObjectData) string {
+func (a *Analyser) formatBucket(data model.ObjectData) string {
 	return fmt.Sprintf("%s\t%s\t%d\t%.f\t%s\t%s\t%s",
-		*data.Bucket, *data.Region, *data.Count, sizeCalc(*data.Size, sat.size), data.CreationDate.String(),
+		*data.Bucket, *data.Region, *data.Count, sizeCalc(*data.Size, a.size), data.CreationDate.String(),
 		data.LastModified.String(), *data.StorageClass)
 }
 

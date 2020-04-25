@@ -38,7 +38,7 @@ func Test_sat_Analyse(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sat := &sat{
+			sat := &Analyser{
 				byRegion:    tt.fields.byRegion,
 				withStorage: tt.fields.withStorage,
 				filter:      tt.fields.filter,
@@ -46,15 +46,15 @@ func Test_sat_Analyse(t *testing.T) {
 			}
 			got, err := sat.Analyse(tt.args.s3)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("sat.Analyse() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Analyser.Analyse() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			} //func Objects error message
 			if (err != nil) && tt.wantErr && fmt.Sprint(err) != "func Objects error message" {
-				t.Errorf("sat.Analyse() error = %v, wantErr %v", err, "func Objects error message")
+				t.Errorf("Analyser.Analyse() error = %v, wantErr %v", err, "func Objects error message")
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("sat.Analyse() = %v, want %v", got, tt.want)
+				t.Errorf("Analyser.Analyse() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -95,14 +95,14 @@ func Test_sat_key(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sat := &sat{
+			sat := &Analyser{
 				byRegion:    tt.fields.byRegion,
 				withStorage: tt.fields.withStorage,
 				filter:      tt.fields.filter,
 				size:        tt.fields.size,
 			}
 			if got := sat.key(tt.args.object); got != tt.want {
-				t.Errorf("sat.key() = %v, want %v", got, tt.want)
+				t.Errorf("Analyser.key() = %v, want %v", got, tt.want)
 			}
 		})
 	}
