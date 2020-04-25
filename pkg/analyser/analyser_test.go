@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"fmt"
-	"github.com/SimpleApplicationsOrg/s3analyser/model"
-	"github.com/SimpleApplicationsOrg/s3analyser/service"
+	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
+	"github.com/SimpleApplicationsOrg/s3analyser/pkg/service"
 )
 
 func Test_sat_Analyse(t *testing.T) {

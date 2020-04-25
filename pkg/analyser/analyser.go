@@ -1,8 +1,8 @@
 package analyser
 
 import (
-	"github.com/SimpleApplicationsOrg/s3analyser/model"
-	"github.com/SimpleApplicationsOrg/s3analyser/service"
+	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
+	"github.com/SimpleApplicationsOrg/s3analyser/pkg/service"
 	"io"
 )
 

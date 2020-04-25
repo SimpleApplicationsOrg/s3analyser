@@ -2,7 +2,7 @@ package analyser
 
 import (
 	"errors"
-	"github.com/SimpleApplicationsOrg/s3analyser/model"
+	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"time"
 )
