@@ -1,8 +1,8 @@
 package analyser
 
 import (
+	"fmt"
 	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
-	"io"
 )
 
 var zero = 0
@@ -19,36 +19,28 @@ type S3 interface {
 	Objects(filter model.FilterMap) ([]*model.ObjectData, error)
 }
 
-// S3Analyser is used to analyze s3 objects and print the result
-type S3Analyser interface {
-	Analyse(s3 S3) (*Result, error)
-	Print(writer io.Writer, result *Result)
-}
-
-type sat struct {
+type Analyser struct {
 	byRegion    bool
 	withStorage bool
-	filter      model.FilterMap
 	size        string
 }
 
-// Factory creates the analyzer with the configuration flags
-func Factory(byRegion bool, withStorage bool, filter model.FilterMap, size string) S3Analyser {
-	return &sat{byRegion, withStorage, filter, size}
+// New creates the analyzer with the configuration flags
+func New(byRegion bool, withStorage bool, size string) *Analyser {
+	return &Analyser{byRegion, withStorage, size}
 }
 
 // Analyze s3 buckets
-func (sat *sat) Analyse(s3 S3) (*Result, error) {
+func (a *Analyser) Analyse(objects []*model.ObjectData) (*Result, error) {
 
-	objects, err := s3.Objects(sat.filter)
-	if err != nil {
-		return nil, err
+	if objects == nil {
+		return nil, fmt.Errorf("objects to be analysed should not be nil")
 	}
 
 	result := make(map[string]*model.ObjectData)
 	for _, obj := range objects {
 
-		key := sat.key(*obj)
+		key := a.key(*obj)
 
 		if _, ok := result[key]; !ok {
 			result[key] = &model.ObjectData{Bucket: obj.Bucket, CreationDate: obj.CreationDate, Region: obj.Region,
@@ -66,7 +58,7 @@ func (sat *sat) Analyse(s3 S3) (*Result, error) {
 			result[key].LastModified = obj.LastModified
 		}
 
-		if !sat.withStorage {
+		if !a.withStorage {
 			result[key].StorageClass = &blank
 		}
 	}
@@ -74,14 +66,14 @@ func (sat *sat) Analyse(s3 S3) (*Result, error) {
 	return &Result{result}, nil
 }
 
-func (sat *sat) key(object model.ObjectData) string {
+func (a *Analyser) key(object model.ObjectData) string {
 
 	key := *object.Bucket
-	if sat.byRegion {
+	if a.byRegion {
 		key = *object.Region
 	}
 
-	if sat.withStorage {
+	if a.withStorage {
 		key += *object.StorageClass
 	}
 

@@ -42,14 +42,13 @@ func Test_sat_formatRegion(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sat := &sat{
+			sat := &Analyser{
 				byRegion:    tt.fields.byRegion,
 				withStorage: tt.fields.withStorage,
-				filter:      tt.fields.filter,
 				size:        tt.fields.size,
 			}
 			if got := sat.formatRegion(tt.args.data); strings.Contains(got, tt.without) {
-				t.Errorf("sat.formatRegion() = %v, has %v", got, tt.without)
+				t.Errorf("Analyser.formatRegion() = %v, has %v", got, tt.without)
 			}
 		})
 	}
@@ -78,14 +77,13 @@ func Test_sat_formatBucket(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sat := &sat{
+			sat := &Analyser{
 				byRegion:    tt.fields.byRegion,
 				withStorage: tt.fields.withStorage,
-				filter:      tt.fields.filter,
 				size:        tt.fields.size,
 			}
 			if got := sat.formatBucket(tt.args.data); !strings.Contains(got, tt.expect) {
-				t.Errorf("sat.formatBucket() = %v, does not have %v", got, tt.expect)
+				t.Errorf("Analyser.formatBucket() = %v, does not have %v", got, tt.expect)
 			}
 		})
 	}
@@ -158,10 +156,9 @@ func Test_sat_Print(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sat := &sat{
+			sat := &Analyser{
 				byRegion:    tt.fields.byRegion,
 				withStorage: tt.fields.withStorage,
-				filter:      tt.fields.filter,
 				size:        tt.fields.size,
 			}
 			output := &bytes.Buffer{}

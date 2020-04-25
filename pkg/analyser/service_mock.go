@@ -1,7 +1,6 @@
 package analyser
 
 import (
-	"errors"
 	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"time"
@@ -39,17 +38,8 @@ var objectResultWithStorageMock = &model.ObjectData{Bucket: &bucketNameMock,
 	StorageClass: &storageStringMock,
 	Count:        &countMock}
 
+var objectsMock = []*model.ObjectData{objectResultMock}
 var resultBucketMock = &Result{map[string]*model.ObjectData{bucketNameMock: objectResultMock}}
+
+var objectsWithStorageMock = []*model.ObjectData{objectResultWithStorageMock}
 var resultBucketWithStorageMock = &Result{map[string]*model.ObjectData{bucketNameMock: objectResultWithStorageMock}}
-
-type serviceMock struct{}
-
-func (s *serviceMock) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
-	return []*model.ObjectData{objectMock}, nil
-}
-
-type serviceErrorMock struct{}
-
-func (s *serviceErrorMock) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
-	return nil, errors.New("func Objects error message")
-}
