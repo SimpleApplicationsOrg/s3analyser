@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/SimpleApplicationsOrg/s3analyser/analyser"
-	"github.com/SimpleApplicationsOrg/s3analyser/model"
-	"github.com/SimpleApplicationsOrg/s3analyser/service"
+	"github.com/SimpleApplicationsOrg/s3analyser/pkg/analyser"
+	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
+	"github.com/SimpleApplicationsOrg/s3analyser/pkg/service"
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"os"
 )

@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"fmt"
-	"github.com/SimpleApplicationsOrg/s3analyser/model"
+	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
@@ -40,8 +40,8 @@ func Test_svc_Objects(t *testing.T) {
 			false}, // no error is expected
 		{"When operation listBuckets fails Objects should return an error",
 			fields{s3.New(aws.Config{}), &operationsErrorMock{}}, // mocked s3 operations with errors
-			args{model.FilterMap{}},                              // no filter
-			[]*model.ObjectData{},                                // no expected result
+			args{model.FilterMap{}}, // no filter
+			[]*model.ObjectData{},   // no expected result
 			true}, // error is expected
 	}
 	for _, tt := range tests {

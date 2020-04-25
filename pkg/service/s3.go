@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/SimpleApplicationsOrg/s3analyser/model"
+	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	service "github.com/aws/aws-sdk-go-v2/service/s3"
 )

@@ -2,7 +2,7 @@ package analyser
 
 import (
 	"fmt"
-	"github.com/SimpleApplicationsOrg/s3analyser/model"
+	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
 	"io"
 	"math"
 	"text/tabwriter"

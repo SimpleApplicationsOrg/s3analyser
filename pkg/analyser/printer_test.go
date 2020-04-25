@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/SimpleApplicationsOrg/s3analyser/model"
+	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
 )
 
 const KB = int64(1024)
