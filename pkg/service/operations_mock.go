@@ -20,30 +20,30 @@ var objectMock = s3.Object{Size: &sizeMock, LastModified: &lastModifiedMock, Sto
 
 type operationsMock struct{}
 
-func (o *operationsMock) listBuckets(svc Service) ([]s3.Bucket, error) {
+func (o *operationsMock) listBuckets() ([]s3.Bucket, error) {
 	bucket := s3.Bucket{Name: &bucketNameMock, CreationDate: &creationDateMock}
 	return []s3.Bucket{bucket}, nil
 }
 
-func (o *operationsMock) listObjects(svc Service, bucketName string, prefix string) ([]s3.Object, error) {
+func (o *operationsMock) listObjects(bucketName string, prefix string) ([]s3.Object, error) {
 	object := s3.Object{Size: &sizeMock, LastModified: &lastModifiedMock, StorageClass: storageMock}
 	return []s3.Object{object}, nil
 }
 
-func (o *operationsMock) getRegion(svc Service, bucketName string) (string, error) {
+func (o *operationsMock) getRegion(bucketName string) (string, error) {
 	return regionMock, nil
 }
 
 type operationsErrorMock struct{}
 
-func (o *operationsErrorMock) listBuckets(svc Service) ([]s3.Bucket, error) {
+func (o *operationsErrorMock) listBuckets() ([]s3.Bucket, error) {
 	return nil, errors.New("list buckets error message")
 }
 
-func (o *operationsErrorMock) listObjects(svc Service, bucketName string, prefix string) ([]s3.Object, error) {
+func (o *operationsErrorMock) listObjects(bucketName string, prefix string) ([]s3.Object, error) {
 	return nil, errors.New("list objects error message")
 }
 
-func (o *operationsErrorMock) getRegion(svc Service, bucketName string) (string, error) {
+func (o *operationsErrorMock) getRegion(bucketName string) (string, error) {
 	return "", errors.New("get region error message")
 }

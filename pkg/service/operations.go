@@ -6,15 +6,17 @@ import (
 )
 
 type s3Operations interface {
-	listBuckets(scv Service) ([]s3.Bucket, error)
-	listObjects(svc Service, bucketName string, prefix string) ([]s3.Object, error)
-	getRegion(svc Service, bucketName string) (string, error)
+	listBuckets() ([]s3.Bucket, error)
+	listObjects(bucketName string, prefix string) ([]s3.Object, error)
+	getRegion(bucketName string) (string, error)
 }
 
-type operations struct{}
+type operation struct {
+	*s3.Client
+}
 
-func (o *operations) listBuckets(svc Service) ([]s3.Bucket, error) {
-	req := svc.ListBucketsRequest(&s3.ListBucketsInput{})
+func (o *operation) listBuckets() ([]s3.Bucket, error) {
+	req := o.ListBucketsRequest(&s3.ListBucketsInput{})
 	resp, err := req.Send(context.Background())
 	if err != nil {
 		return nil, err
@@ -22,8 +24,8 @@ func (o *operations) listBuckets(svc Service) ([]s3.Bucket, error) {
 	return resp.Buckets, nil
 }
 
-func (o *operations) listObjects(svc Service, bucketName string, prefix string) ([]s3.Object, error) {
-	req := svc.ListObjectsRequest(&s3.ListObjectsInput{Bucket: &bucketName, Prefix: &prefix})
+func (o *operation) listObjects(bucketName string, prefix string) ([]s3.Object, error) {
+	req := o.ListObjectsRequest(&s3.ListObjectsInput{Bucket: &bucketName, Prefix: &prefix})
 	resp, err := req.Send(context.Background())
 	if err != nil {
 		return nil, err
@@ -31,8 +33,8 @@ func (o *operations) listObjects(svc Service, bucketName string, prefix string) 
 	return resp.Contents, err
 }
 
-func (o *operations) getRegion(svc Service, bucketName string) (string, error) {
-	req := svc.GetBucketLocationRequest(&s3.GetBucketLocationInput{Bucket: &bucketName})
+func (o *operation) getRegion(bucketName string) (string, error) {
+	req := o.GetBucketLocationRequest(&s3.GetBucketLocationInput{Bucket: &bucketName})
 	req.Handlers.Unmarshal.PushBackNamed(s3.NormalizeBucketLocationHandler)
 	resp, err := req.Send(context.Background())
 	if err != nil {
