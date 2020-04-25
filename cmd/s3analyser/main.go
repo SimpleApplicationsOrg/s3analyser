@@ -42,11 +42,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	s3 := service.NewService(cfg)
+	s := service.New(cfg)
 
 	s3Analyser := analyser.Factory(*byRegion, *withStorage, filter, *size)
 
-	result, err := s3Analyser.Analyse(s3)
+	result, err := s3Analyser.Analyse(s)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to analyse s3. "+
 			"Please make sure your credentials are correct set and you have access to AWS.\n"+

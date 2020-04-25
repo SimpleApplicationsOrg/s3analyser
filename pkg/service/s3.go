@@ -11,8 +11,8 @@ type Service struct {
 	s3Operations
 }
 
-// NewService creates a S3 service using aws configuration. ~/.aws/credentials, environment variables, ...
-func NewService(config aws.Config) *Service {
+// New creates a S3 service using aws configuration. ~/.aws/credentials, environment variables, ...
+func New(config aws.Config) *Service {
 	return &Service{service.New(config), &operations{}}
 }
 
