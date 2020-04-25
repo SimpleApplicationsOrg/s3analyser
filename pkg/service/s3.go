@@ -6,23 +6,18 @@ import (
 	service "github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-type svc struct {
+type Service struct {
 	*service.Client
 	s3Operations
 }
 
-// S3 is used to access all s3 objects
-type S3 interface {
-	Objects(filter model.FilterMap) ([]*model.ObjectData, error)
-}
-
-// S3Factory creates a S3 service using aws configuration. ~/.aws/credentials, environment variables, ...
-func S3Factory(config aws.Config) S3 {
-	return &svc{service.New(config), &operations{}}
+// New creates a S3 service using aws configuration. ~/.aws/credentials, environment variables, ...
+func New(config aws.Config) *Service {
+	return &Service{service.New(config), &operations{}}
 }
 
 // List all objects from S3 using the filter
-func (svc *svc) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
+func (svc *Service) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
 	o := svc.s3Operations
 
 	buckets, err := o.listBuckets(*svc)
@@ -45,7 +40,7 @@ func (svc *svc) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
 	return objects, nil
 }
 
-func (svc *svc) bucketObjects(bucket *service.Bucket, prefix string) ([]*model.ObjectData, error) {
+func (svc *Service) bucketObjects(bucket *service.Bucket, prefix string) ([]*model.ObjectData, error) {
 	o := svc.s3Operations
 
 	region, err := o.getRegion(*svc, *bucket.Name)

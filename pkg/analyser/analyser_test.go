@@ -6,7 +6,6 @@ import (
 
 	"fmt"
 	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
-	"github.com/SimpleApplicationsOrg/s3analyser/pkg/service"
 )
 
 func Test_sat_Analyse(t *testing.T) {
@@ -17,7 +16,7 @@ func Test_sat_Analyse(t *testing.T) {
 		size        string
 	}
 	type args struct {
-		s3 service.S3
+		s3 S3
 	}
 	tests := []struct {
 		name    string
