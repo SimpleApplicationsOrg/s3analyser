@@ -11,14 +11,13 @@ var blank = ""
 
 // Result has the analysis result
 type Result struct {
-	Objects map[string]*model.ObjectData
+	byRegion    bool
+	withStorage bool
+	size        string
+	objects     map[string]model.ObjectData
 }
 
-// S3 is used to access all s3 objects
-type S3 interface {
-	Objects(filter model.FilterMap) ([]*model.ObjectData, error)
-}
-
+// Analyser contains the necessary config to perform the analyse
 type Analyser struct {
 	byRegion    bool
 	withStorage bool
@@ -30,51 +29,54 @@ func New(byRegion bool, withStorage bool, size string) *Analyser {
 	return &Analyser{byRegion, withStorage, size}
 }
 
-// Analyze s3 buckets
-func (a *Analyser) Analyse(objects []*model.ObjectData) (*Result, error) {
+// Analyze data
+func (a *Analyser) Analyse(objects []model.ObjectData) (*Result, error) {
 
 	if objects == nil {
 		return nil, fmt.Errorf("objects to be analysed should not be nil")
 	}
 
-	result := make(map[string]*model.ObjectData)
+	result := make(map[string]model.ObjectData)
 	for _, obj := range objects {
 
-		key := a.key(*obj)
+		key := a.key(obj)
 
 		if _, ok := result[key]; !ok {
-			result[key] = &model.ObjectData{Bucket: obj.Bucket, CreationDate: obj.CreationDate, Region: obj.Region,
-				LastModified: obj.LastModified, Count: &zero, Size: &zero64, StorageClass: obj.StorageClass}
+			result[key] = model.ObjectData{Bucket: obj.Bucket, CreationDate: obj.CreationDate, Region: obj.Region,
+				LastModified: obj.LastModified, Count: zero, Size: zero64, StorageClass: obj.StorageClass}
 		}
 
 		object := result[key]
-		size := *object.Size + *obj.Size
-		count := *object.Count + 1
+		size := object.Size + obj.Size
+		count := object.Count + 1
 
-		result[key].Size = &size
-		result[key].Count = &count
+		r := result[key]
+		r.Size = size
+		r.Count = count
 
-		if obj.LastModified.After(*object.LastModified) {
-			result[key].LastModified = obj.LastModified
+		if obj.LastModified.After(object.LastModified) {
+			r.LastModified = obj.LastModified
 		}
 
 		if !a.withStorage {
-			result[key].StorageClass = &blank
+			r.StorageClass = blank
 		}
+
+		result[key] = r
 	}
 
-	return &Result{result}, nil
+	return &Result{a.byRegion, a.withStorage, a.size, result}, nil
 }
 
 func (a *Analyser) key(object model.ObjectData) string {
 
-	key := *object.Bucket
+	key := object.Bucket
 	if a.byRegion {
-		key = *object.Region
+		key = object.Region
 	}
 
 	if a.withStorage {
-		key += *object.StorageClass
+		key += object.StorageClass
 	}
 
 	return key

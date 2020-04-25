@@ -10,38 +10,39 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-var expectedOject = model.ObjectData{Bucket: &bucketNameMock,
-	Region:       &regionMock,
-	Size:         &sizeMock,
-	CreationDate: &creationDateMock,
-	LastModified: &lastModifiedMock,
-	StorageClass: &storageStringMock}
+var expectedOject = model.ObjectData{Bucket: bucketNameMock,
+	Region:       regionMock,
+	Size:         sizeMock,
+	CreationDate: creationDateMock,
+	LastModified: lastModifiedMock,
+	StorageClass: storageStringMock,
+	Key: key}
 
-func Test_svc_Objects(t *testing.T) {
+func Test_Objects(t *testing.T) {
 	type fields struct {
 		S3           *s3.Client
 		s3Operations s3Operations
 	}
 	type args struct {
-		filter model.FilterMap
+		filter FilterMap
 	}
 	tests := []struct {
 		name    string
 		fields  fields
 		args    args
-		want    []*model.ObjectData
+		want    []model.ObjectData
 		wantErr bool
 	}{
 		//Test cases
-		{"When Objects is called it should return the expected list of objects",
+		{"When objects is called it should return the expected list of objects",
 			fields{s3.New(aws.Config{}), &operationsMock{}}, // mocked s3 operations
-			args{model.FilterMap{}},                         // no filter
-			[]*model.ObjectData{&expectedOject},             // expected list of objects
+			args{FilterMap{}},                 // no filter
+			[]model.ObjectData{expectedOject}, // expected list of objects
 			false}, // no error is expected
-		{"When operation listBuckets fails Objects should return an error",
+		{"When operation listBuckets fails objects should return an error",
 			fields{s3.New(aws.Config{}), &operationsErrorMock{}}, // mocked s3 operations with errors
-			args{model.FilterMap{}}, // no filter
-			[]*model.ObjectData{},   // no expected result
+			args{FilterMap{}},    // no filter
+			[]model.ObjectData{}, // no expected result
 			true}, // error is expected
 	}
 	for _, tt := range tests {
@@ -52,17 +53,17 @@ func Test_svc_Objects(t *testing.T) {
 			}
 			got, err := svc.Objects(tt.args.filter)
 			if (err != nil) != tt.wantErr && err.Error() != "list buckets error message" {
-				t.Errorf("Service.Objects() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Service.objects() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if err == nil && !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Service.Objects() = %v, want %v", got, tt.want)
+				t.Errorf("Service.objects() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_svc_bucketObjects(t *testing.T) {
+func Test_bucketObjects(t *testing.T) {
 	type fields struct {
 		S3           *s3.Client
 		s3Operations s3Operations
@@ -75,19 +76,19 @@ func Test_svc_bucketObjects(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    []*model.ObjectData
+		want    []model.ObjectData
 		wantErr bool
 	}{
 		// Test cases
 		{"When bucketObjects is called it should return expected list of objects",
 			fields{s3.New(aws.Config{}), &operationsMock{}}, // mocked s3 operations
 			args{&bucketMock, prefixMock},                   // mocked filter
-			[]*model.ObjectData{&expectedOject},             // expected list of objects
+			[]model.ObjectData{expectedOject},             // expected list of objects
 			false}, // no error is expected
 		{"When operation getRegion returns an error bucketObjects should return an error",
 			fields{s3.New(aws.Config{}), &operationsErrorMock{}}, // mocked s3 operations with error
 			args{&bucketMock, prefixMock},                        // mocked filter
-			[]*model.ObjectData{},                                // no expected return
+			[]model.ObjectData{},                                // no expected return
 			true}, // error is expected
 	}
 	for _, tt := range tests {
@@ -121,11 +122,11 @@ func Test_convert(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want []*model.ObjectData
+		want []model.ObjectData
 	}{
 		{"convert should return expected list of objects",
 			args{[]s3.Object{objectMock}, &bucketMock, regionMock},
-			[]*model.ObjectData{&expectedOject}},
+			[]model.ObjectData{expectedOject}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

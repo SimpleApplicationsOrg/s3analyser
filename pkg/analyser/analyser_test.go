@@ -14,7 +14,7 @@ func Test_Analyse(t *testing.T) {
 		size        string
 	}
 	type args struct {
-		objects []*model.ObjectData
+		objects []model.ObjectData
 	}
 	tests := []struct {
 		name    string
@@ -70,19 +70,19 @@ func Test_key(t *testing.T) {
 	}{
 		{"When no flag is passed, key should return the bucket name as key",
 			fields{false, false,"KB"},
-			args{*objectMock},
+			args{objectMock},
 			bucketNameMock},
 		{"When byRegion is passed, key should return the bucket name as key",
 			fields{true, false,"KB"},
-			args{*objectMock},
+			args{objectMock},
 			regionMock},
 		{"When only withStorage is passed, key should return the bucket name and storage as key",
 			fields{false, true, "KB"},
-			args{*objectMock},
+			args{objectMock},
 			bucketNameMock + storageStringMock},
 		{"When byRegion and withStorage are passed, key should return the region and storage as key",
 			fields{true, true,"KB"},
-			args{*objectMock},
+			args{objectMock},
 			regionMock + storageStringMock},
 	}
 	for _, tt := range tests {

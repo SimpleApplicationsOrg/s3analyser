@@ -19,12 +19,9 @@ const expectedRegionOutput = "Region     Count  Total (KB)  Creation            
 const expectedBucketWithStorageOutput = "Bucket  Region     Count  Total (KB)  Creation                                 Last Modified                            Storage\ntest    us-east-1  1      1           2018-01-01 01:01:01.000000001 +0000 UTC  2018-01-01 01:01:01.000000001 +0000 UTC  STANDARD\n\n"
 const expectedRegionWithStorageOutput = "Region     Count  Total (KB)  Creation                                 Last Modified                            Storage\nus-east-1  1      1           2018-01-01 01:01:01.000000001 +0000 UTC  2018-01-01 01:01:01.000000001 +0000 UTC  STANDARD\n\n"
 
-func Test_sat_formatRegion(t *testing.T) {
+func Test_formatRegion(t *testing.T) {
 	type fields struct {
-		byRegion    bool
-		withStorage bool
-		filter      model.FilterMap
-		size        string
+		result *Result
 	}
 	type args struct {
 		data model.ObjectData
@@ -36,30 +33,28 @@ func Test_sat_formatRegion(t *testing.T) {
 		without string
 	}{
 		{"When formatRegion is called the result should not have bucket name",
-			fields{true, false, model.FilterMap{}, "KB"},
-			args{*objectResultMock},
+			fields{result: &Result{
+				byRegion:    true,
+				withStorage: false,
+				size:        "KB",
+				objects:     resultBucketMock.objects,
+			}},
+			args{objectResultMock},
 			bucketNameMock},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sat := &Analyser{
-				byRegion:    tt.fields.byRegion,
-				withStorage: tt.fields.withStorage,
-				size:        tt.fields.size,
-			}
-			if got := sat.formatRegion(tt.args.data); strings.Contains(got, tt.without) {
+			result := tt.fields.result
+			if got := result.formatRegion(tt.args.data); strings.Contains(got, tt.without) {
 				t.Errorf("Analyser.formatRegion() = %v, has %v", got, tt.without)
 			}
 		})
 	}
 }
 
-func Test_sat_formatBucket(t *testing.T) {
+func Test_formatBucket(t *testing.T) {
 	type fields struct {
-		byRegion    bool
-		withStorage bool
-		filter      model.FilterMap
-		size        string
+		result *Result
 	}
 	type args struct {
 		data model.ObjectData
@@ -71,18 +66,19 @@ func Test_sat_formatBucket(t *testing.T) {
 		expect string
 	}{
 		{"When formatRegion is called the result should not have bucket name",
-			fields{true, false, model.FilterMap{}, "KB"},
-			args{*objectResultMock},
+			fields{result: &Result{
+				byRegion:    true,
+				withStorage: false,
+				size:        "KB",
+				objects:     resultBucketMock.objects,
+			}},
+			args{objectResultMock},
 			bucketNameMock},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sat := &Analyser{
-				byRegion:    tt.fields.byRegion,
-				withStorage: tt.fields.withStorage,
-				size:        tt.fields.size,
-			}
-			if got := sat.formatBucket(tt.args.data); !strings.Contains(got, tt.expect) {
+			result := tt.fields.result
+			if got := result.formatBucket(tt.args.data); !strings.Contains(got, tt.expect) {
 				t.Errorf("Analyser.formatBucket() = %v, does not have %v", got, tt.expect)
 			}
 		})
@@ -121,15 +117,12 @@ func Test_sizeCalc(t *testing.T) {
 	}
 }
 
-func Test_sat_Print(t *testing.T) {
+func Test_Print(t *testing.T) {
 	type fields struct {
-		byRegion    bool
-		withStorage bool
-		filter      model.FilterMap
-		size        string
+		result *Result
 	}
 	type args struct {
-		result *Result
+		writer *bytes.Buffer
 	}
 	tests := []struct {
 		name   string
@@ -138,32 +131,48 @@ func Test_sat_Print(t *testing.T) {
 		want   string
 	}{
 		{"When Print without flags set, it should print the expected output",
-			fields{false, false, model.FilterMap{}, "KB"},
-			args{resultBucketMock},
+			fields{result: &Result{
+				byRegion:    false,
+				withStorage: false,
+				size:        "KB",
+				objects:     resultBucketMock.objects,
+			}},
+			args{&bytes.Buffer{}},
 			expectedBucketOutput},
 		{"When Print with byRegion set, it should print the expected output",
-			fields{true, false, model.FilterMap{}, "KB"},
-			args{resultBucketMock},
+			fields{result: &Result{
+				byRegion:    true,
+				withStorage: false,
+				size:        "KB",
+				objects:     resultBucketMock.objects,
+			}},
+			args{&bytes.Buffer{}},
 			expectedRegionOutput},
 		{"When Print with withStorage set, it should print the expected output",
-			fields{false, true, model.FilterMap{}, "KB"},
-			args{resultBucketWithStorageMock},
+			fields{result: &Result{
+				byRegion:    false,
+				withStorage: true,
+				size:        "KB",
+				objects:     resultBucketWithStorageMock.objects,
+			}},
+			args{&bytes.Buffer{}},
 			expectedBucketWithStorageOutput},
 		{"When Print with byRegion and withStorage set, it should print the expected output",
-			fields{true, true, model.FilterMap{}, "KB"},
-			args{resultBucketWithStorageMock},
+			fields{result: &Result{
+				byRegion:    true,
+				withStorage: true,
+				size:        "KB",
+				objects:     resultBucketWithStorageMock.objects,
+			}},
+			args{&bytes.Buffer{}},
 			expectedRegionWithStorageOutput},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sat := &Analyser{
-				byRegion:    tt.fields.byRegion,
-				withStorage: tt.fields.withStorage,
-				size:        tt.fields.size,
-			}
-			output := &bytes.Buffer{}
-			sat.Print(output, tt.args.result)
-			got := output.String()
+			result := tt.fields.result
+			writer := tt.args.writer
+			result.PrintTo(writer)
+			got := writer.String()
 			if got != tt.want {
 				t.Errorf("Print() = \n%v \nwant: \n%v", got, tt.want)
 			}
