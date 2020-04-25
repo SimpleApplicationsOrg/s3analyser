@@ -46,17 +46,17 @@ func Test_svc_Objects(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			svc := &svc{
+			svc := &Service{
 				Client:           tt.fields.S3,
 				s3Operations: tt.fields.s3Operations,
 			}
 			got, err := svc.Objects(tt.args.filter)
 			if (err != nil) != tt.wantErr && err.Error() != "list buckets error message" {
-				t.Errorf("svc.Objects() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Service.Objects() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if err == nil && !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("svc.Objects() = %v, want %v", got, tt.want)
+				t.Errorf("Service.Objects() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -92,21 +92,21 @@ func Test_svc_bucketObjects(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			svc := &svc{
+			svc := &Service{
 				Client:           tt.fields.S3,
 				s3Operations: tt.fields.s3Operations,
 			}
 			got, err := svc.bucketObjects(tt.args.bucket, tt.args.prefix)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("svc.bucketObjects() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Service.bucketObjects() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if err != nil && tt.wantErr && fmt.Sprint(err) != "get region error message" {
-				t.Errorf("svc.bucketObjects() error = %v, want %v", err, "get region error message")
+				t.Errorf("Service.bucketObjects() error = %v, want %v", err, "get region error message")
 				return
 			}
 			if err == nil && !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("svc.bucketObjects() = %v, want %v", got, tt.want)
+				t.Errorf("Service.bucketObjects() = %v, want %v", got, tt.want)
 			}
 		})
 	}

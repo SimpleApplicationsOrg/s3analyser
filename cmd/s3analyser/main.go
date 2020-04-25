@@ -42,7 +42,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	s3 := service.S3Factory(cfg)
+	s3 := service.NewService(cfg)
 
 	s3Analyser := analyser.Factory(*byRegion, *withStorage, filter, *size)
 

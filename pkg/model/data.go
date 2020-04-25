@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// ObjectData is used for keep s3 objetcs data and the result of analysis
+// ObjectData is used for keep s3 objects data and the result of analysis
 type ObjectData struct {
 	Bucket       *string
 	CreationDate *time.Time
