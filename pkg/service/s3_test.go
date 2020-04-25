@@ -34,12 +34,12 @@ func Test_Objects(t *testing.T) {
 		wantErr bool
 	}{
 		//Test cases
-		{"When Objects is called it should return the expected list of objects",
+		{"When objects is called it should return the expected list of objects",
 			fields{s3.New(aws.Config{}), &operationsMock{}}, // mocked s3 operations
 			args{FilterMap{}},                 // no filter
 			[]model.ObjectData{expectedOject}, // expected list of objects
 			false}, // no error is expected
-		{"When operation listBuckets fails Objects should return an error",
+		{"When operation listBuckets fails objects should return an error",
 			fields{s3.New(aws.Config{}), &operationsErrorMock{}}, // mocked s3 operations with errors
 			args{FilterMap{}},    // no filter
 			[]model.ObjectData{}, // no expected result
@@ -53,11 +53,11 @@ func Test_Objects(t *testing.T) {
 			}
 			got, err := svc.Objects(tt.args.filter)
 			if (err != nil) != tt.wantErr && err.Error() != "list buckets error message" {
-				t.Errorf("Service.Objects() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Service.objects() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if err == nil && !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Service.Objects() = %v, want %v", got, tt.want)
+				t.Errorf("Service.objects() = %v, want %v", got, tt.want)
 			}
 		})
 	}

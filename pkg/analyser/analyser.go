@@ -11,9 +11,13 @@ var blank = ""
 
 // Result has the analysis result
 type Result struct {
-	Objects map[string]model.ObjectData
+	byRegion    bool
+	withStorage bool
+	size        string
+	objects     map[string]model.ObjectData
 }
 
+// Analyser contains the necessary config to perform the analyse
 type Analyser struct {
 	byRegion    bool
 	withStorage bool
@@ -25,7 +29,7 @@ func New(byRegion bool, withStorage bool, size string) *Analyser {
 	return &Analyser{byRegion, withStorage, size}
 }
 
-// Analyze s3 buckets
+// Analyze data
 func (a *Analyser) Analyse(objects []model.ObjectData) (*Result, error) {
 
 	if objects == nil {
@@ -61,7 +65,7 @@ func (a *Analyser) Analyse(objects []model.ObjectData) (*Result, error) {
 		result[key] = r
 	}
 
-	return &Result{result}, nil
+	return &Result{a.byRegion, a.withStorage, a.size, result}, nil
 }
 
 func (a *Analyser) key(object model.ObjectData) string {

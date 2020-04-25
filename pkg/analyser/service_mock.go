@@ -39,6 +39,6 @@ var objectResultWithStorageMock = model.ObjectData{Bucket: bucketNameMock,
 	Count:        countMock}
 
 var objectsMock = []model.ObjectData{objectResultMock}
-var resultBucketMock = &Result{map[string]model.ObjectData{bucketNameMock: objectResultMock}}
+var resultBucketMock = &Result{false, false, "KB", map[string]model.ObjectData{bucketNameMock: objectResultMock}}
 
-var resultBucketWithStorageMock = &Result{map[string]model.ObjectData{bucketNameMock: objectResultWithStorageMock}}
+var resultBucketWithStorageMock = &Result{false, false, "KB",map[string]model.ObjectData{bucketNameMock: objectResultWithStorageMock}}
