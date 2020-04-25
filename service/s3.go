@@ -7,7 +7,7 @@ import (
 )
 
 type svc struct {
-	*service.S3
+	*service.Client
 	s3Operations
 }
 

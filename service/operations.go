@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
@@ -14,7 +15,7 @@ type operations struct{}
 
 func (o *operations) listBuckets(svc svc) ([]s3.Bucket, error) {
 	req := svc.ListBucketsRequest(&s3.ListBucketsInput{})
-	resp, err := req.Send()
+	resp, err := req.Send(context.Background())
 	if err != nil {
 		return nil, err
 	}
@@ -22,22 +23,18 @@ func (o *operations) listBuckets(svc svc) ([]s3.Bucket, error) {
 }
 
 func (o *operations) listObjects(svc svc, bucketName string, prefix string) ([]s3.Object, error) {
-	objects := make([]s3.Object, 0)
-	err := svc.ListObjectsPages(&s3.ListObjectsInput{Bucket: &bucketName, Prefix: &prefix},
-		func(page *s3.ListObjectsOutput, morePages bool) bool {
-			if len(page.Contents) == 0 {
-				return false
-			}
-			objects = append(objects, page.Contents...)
-			return true
-		})
-	return objects, err
+	req := svc.ListObjectsRequest(&s3.ListObjectsInput{Bucket: &bucketName, Prefix: &prefix})
+	resp, err := req.Send(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return resp.Contents, err
 }
 
 func (o *operations) getRegion(svc svc, bucketName string) (string, error) {
 	req := svc.GetBucketLocationRequest(&s3.GetBucketLocationInput{Bucket: &bucketName})
 	req.Handlers.Unmarshal.PushBackNamed(s3.NormalizeBucketLocationHandler)
-	resp, err := req.Send()
+	resp, err := req.Send(context.Background())
 	if err != nil {
 		return "", err
 	}
