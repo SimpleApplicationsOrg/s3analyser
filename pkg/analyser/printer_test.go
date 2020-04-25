@@ -45,7 +45,6 @@ func Test_sat_formatRegion(t *testing.T) {
 			sat := &Analyser{
 				byRegion:    tt.fields.byRegion,
 				withStorage: tt.fields.withStorage,
-				filter:      tt.fields.filter,
 				size:        tt.fields.size,
 			}
 			if got := sat.formatRegion(tt.args.data); strings.Contains(got, tt.without) {
@@ -81,7 +80,6 @@ func Test_sat_formatBucket(t *testing.T) {
 			sat := &Analyser{
 				byRegion:    tt.fields.byRegion,
 				withStorage: tt.fields.withStorage,
-				filter:      tt.fields.filter,
 				size:        tt.fields.size,
 			}
 			if got := sat.formatBucket(tt.args.data); !strings.Contains(got, tt.expect) {
@@ -161,7 +159,6 @@ func Test_sat_Print(t *testing.T) {
 			sat := &Analyser{
 				byRegion:    tt.fields.byRegion,
 				withStorage: tt.fields.withStorage,
-				filter:      tt.fields.filter,
 				size:        tt.fields.size,
 			}
 			output := &bytes.Buffer{}

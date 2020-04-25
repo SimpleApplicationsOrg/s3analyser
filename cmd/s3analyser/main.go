@@ -43,10 +43,15 @@ func main() {
 	}
 
 	s := service.New(cfg)
+	objects, err := s.Objects(filter)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Could not get objects from s3 %v", err)
+		os.Exit(1)
+	}
 
-	s3Analyser := analyser.Factory(*byRegion, *withStorage, filter, *size)
+	s3Analyser := analyser.New(*byRegion, *withStorage, *size)
 
-	result, err := s3Analyser.Analyse(s)
+	result, err := s3Analyser.Analyse(objects)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to analyse s3. "+
 			"Please make sure your credentials are correct set and you have access to AWS.\n"+
@@ -55,5 +60,4 @@ func main() {
 	}
 
 	s3Analyser.Print(os.Stdout, result)
-
 }

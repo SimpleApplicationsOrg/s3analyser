@@ -1,8 +1,8 @@
 package analyser
 
 import (
+	"fmt"
 	"github.com/SimpleApplicationsOrg/s3analyser/pkg/model"
-	"io"
 )
 
 var zero = 0
@@ -19,30 +19,22 @@ type S3 interface {
 	Objects(filter model.FilterMap) ([]*model.ObjectData, error)
 }
 
-// S3Analyser is used to analyze s3 objects and print the result
-type S3Analyser interface {
-	Analyse(s3 S3) (*Result, error)
-	Print(writer io.Writer, result *Result)
-}
-
 type Analyser struct {
 	byRegion    bool
 	withStorage bool
-	filter      model.FilterMap
 	size        string
 }
 
-// Factory creates the analyzer with the configuration flags
-func Factory(byRegion bool, withStorage bool, filter model.FilterMap, size string) S3Analyser {
-	return &Analyser{byRegion, withStorage, filter, size}
+// New creates the analyzer with the configuration flags
+func New(byRegion bool, withStorage bool, size string) *Analyser {
+	return &Analyser{byRegion, withStorage, size}
 }
 
 // Analyze s3 buckets
-func (a *Analyser) Analyse(s3 S3) (*Result, error) {
+func (a *Analyser) Analyse(objects []*model.ObjectData) (*Result, error) {
 
-	objects, err := s3.Objects(a.filter)
-	if err != nil {
-		return nil, err
+	if objects == nil {
+		return nil, fmt.Errorf("objects to be analysed should not be nil")
 	}
 
 	result := make(map[string]*model.ObjectData)
