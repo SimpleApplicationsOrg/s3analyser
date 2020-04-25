@@ -20,14 +20,14 @@ func New(config aws.Config) *Service {
 }
 
 // List all objects from S3 using the filter
-func (s *Service) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
+func (s *Service) Objects(filter model.FilterMap) ([]model.ObjectData, error) {
 
 	buckets, err := s.listBuckets()
 	if err != nil {
 		return nil, err
 	}
 
-	var objects []*model.ObjectData
+	var objects []model.ObjectData
 	for _, bucket := range buckets {
 		if _, ok := filter[*bucket.Name]; !ok && len(filter) > 0 {
 			continue
@@ -42,7 +42,7 @@ func (s *Service) Objects(filter model.FilterMap) ([]*model.ObjectData, error) {
 	return objects, nil
 }
 
-func (s *Service) bucketObjects(bucket *s3.Bucket, prefix string) ([]*model.ObjectData, error) {
+func (s *Service) bucketObjects(bucket *s3.Bucket, prefix string) ([]model.ObjectData, error) {
 
 	region, err := s.getRegion(*bucket.Name)
 	if err != nil {
@@ -58,13 +58,13 @@ func (s *Service) bucketObjects(bucket *s3.Bucket, prefix string) ([]*model.Obje
 	return convert(s3Objects, bucket, region), nil
 }
 
-func convert(objects []s3.Object, bucket *s3.Bucket, region string) []*model.ObjectData {
+func convert(objects []s3.Object, bucket *s3.Bucket, region string) []model.ObjectData {
 
-	objDatas := make([]*model.ObjectData, len(objects))
+	objDatas := make([]model.ObjectData, len(objects))
 	for i, obj := range objects {
 		storage := string(obj.StorageClass)
-		objDatas[i] = &model.ObjectData{Bucket: bucket.Name, CreationDate: bucket.CreationDate, Region: &region, Key: obj.Key,
-			LastModified: obj.LastModified, Size: obj.Size, StorageClass: &storage}
+		objDatas[i] = model.ObjectData{Bucket: *bucket.Name, CreationDate: *bucket.CreationDate, Region: region, Key: *obj.Key,
+			LastModified: *obj.LastModified, Size: *obj.Size, StorageClass: storage}
 	}
 
 	return objDatas

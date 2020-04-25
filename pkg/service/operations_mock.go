@@ -14,9 +14,10 @@ var storageMock = s3.ObjectStorageClassStandard
 var storageStringMock = string(storageMock)
 var regionMock = "us-east-1"
 var prefixMock = "test"
+var key = "key"
 
 var bucketMock = s3.Bucket{Name: &bucketNameMock, CreationDate: &creationDateMock}
-var objectMock = s3.Object{Size: &sizeMock, LastModified: &lastModifiedMock, StorageClass: storageMock}
+var objectMock = s3.Object{Size: &sizeMock, LastModified: &lastModifiedMock, StorageClass: storageMock, Key: &key}
 
 type operationsMock struct{}
 
@@ -26,7 +27,7 @@ func (o *operationsMock) listBuckets() ([]s3.Bucket, error) {
 }
 
 func (o *operationsMock) listObjects(bucketName string, prefix string) ([]s3.Object, error) {
-	object := s3.Object{Size: &sizeMock, LastModified: &lastModifiedMock, StorageClass: storageMock}
+	object := s3.Object{Size: &sizeMock, LastModified: &lastModifiedMock, StorageClass: storageMock, Key: &key}
 	return []s3.Object{object}, nil
 }
 

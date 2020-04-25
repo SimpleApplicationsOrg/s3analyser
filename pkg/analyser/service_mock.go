@@ -15,31 +15,30 @@ var storageMock = s3.ObjectStorageClassStandard
 var storageStringMock = string(storageMock)
 var countMock = 1
 
-var objectMock = &model.ObjectData{Bucket: &bucketNameMock,
-	Region:       &regionMock,
-	Size:         &sizeMock,
-	CreationDate: &creationDateMock,
-	LastModified: &lastModifiedMock,
-	StorageClass: &storageStringMock}
+var objectMock = model.ObjectData{Bucket: bucketNameMock,
+	Region:       regionMock,
+	Size:         sizeMock,
+	CreationDate: creationDateMock,
+	LastModified: lastModifiedMock,
+	StorageClass: storageStringMock}
 
-var objectResultMock = &model.ObjectData{Bucket: &bucketNameMock,
-	Region:       &regionMock,
-	Size:         &sizeMock,
-	CreationDate: &creationDateMock,
-	LastModified: &lastModifiedMock,
-	StorageClass: &blank,
-	Count:        &countMock}
+var objectResultMock = model.ObjectData{Bucket: bucketNameMock,
+	Region:       regionMock,
+	Size:         sizeMock,
+	CreationDate: creationDateMock,
+	LastModified: lastModifiedMock,
+	StorageClass: blank,
+	Count:        countMock}
 
-var objectResultWithStorageMock = &model.ObjectData{Bucket: &bucketNameMock,
-	Region:       &regionMock,
-	Size:         &sizeMock,
-	CreationDate: &creationDateMock,
-	LastModified: &lastModifiedMock,
-	StorageClass: &storageStringMock,
-	Count:        &countMock}
+var objectResultWithStorageMock = model.ObjectData{Bucket: bucketNameMock,
+	Region:       regionMock,
+	Size:         sizeMock,
+	CreationDate: creationDateMock,
+	LastModified: lastModifiedMock,
+	StorageClass: storageStringMock,
+	Count:        countMock}
 
-var objectsMock = []*model.ObjectData{objectResultMock}
-var resultBucketMock = &Result{map[string]*model.ObjectData{bucketNameMock: objectResultMock}}
+var objectsMock = []model.ObjectData{objectResultMock}
+var resultBucketMock = &Result{map[string]model.ObjectData{bucketNameMock: objectResultMock}}
 
-var objectsWithStorageMock = []*model.ObjectData{objectResultWithStorageMock}
-var resultBucketWithStorageMock = &Result{map[string]*model.ObjectData{bucketNameMock: objectResultWithStorageMock}}
+var resultBucketWithStorageMock = &Result{map[string]model.ObjectData{bucketNameMock: objectResultWithStorageMock}}

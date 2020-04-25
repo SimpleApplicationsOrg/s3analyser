@@ -37,7 +37,7 @@ func Test_sat_formatRegion(t *testing.T) {
 	}{
 		{"When formatRegion is called the result should not have bucket name",
 			fields{true, false, model.FilterMap{}, "KB"},
-			args{*objectResultMock},
+			args{objectResultMock},
 			bucketNameMock},
 	}
 	for _, tt := range tests {
@@ -72,7 +72,7 @@ func Test_sat_formatBucket(t *testing.T) {
 	}{
 		{"When formatRegion is called the result should not have bucket name",
 			fields{true, false, model.FilterMap{}, "KB"},
-			args{*objectResultMock},
+			args{objectResultMock},
 			bucketNameMock},
 	}
 	for _, tt := range tests {

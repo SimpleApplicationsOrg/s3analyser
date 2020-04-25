@@ -8,6 +8,7 @@ import (
 	"github.com/SimpleApplicationsOrg/s3analyser/pkg/service"
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"os"
+	"time"
 )
 
 func init() {
@@ -22,6 +23,7 @@ func init() {
 }
 
 func main() {
+	initial := time.Now()
 
 	profile := flag.String("profile", "", "Get credentials for profile in ~/.aws/credentials")
 	size := flag.String("size", "KB", "KB, MB, GB, TB")
@@ -60,4 +62,6 @@ func main() {
 	}
 
 	s3Analyser.Print(os.Stdout, result)
+
+	fmt.Println("time:", time.Now().Sub(initial))
 }

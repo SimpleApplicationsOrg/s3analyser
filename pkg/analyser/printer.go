@@ -33,14 +33,14 @@ func (a *Analyser) Print(writer io.Writer, result *Result) {
 
 func (a *Analyser) formatRegion(data model.ObjectData) string {
 	return fmt.Sprintf("%s\t%d\t%.f\t%s\t%s\t%s",
-		*data.Region, *data.Count, sizeCalc(*data.Size, a.size), data.CreationDate.String(),
-		data.LastModified.String(), *data.StorageClass)
+		data.Region, data.Count, sizeCalc(data.Size, a.size), data.CreationDate.String(),
+		data.LastModified.String(), data.StorageClass)
 }
 
 func (a *Analyser) formatBucket(data model.ObjectData) string {
 	return fmt.Sprintf("%s\t%s\t%d\t%.f\t%s\t%s\t%s",
-		*data.Bucket, *data.Region, *data.Count, sizeCalc(*data.Size, a.size), data.CreationDate.String(),
-		data.LastModified.String(), *data.StorageClass)
+		data.Bucket, data.Region, data.Count, sizeCalc(data.Size, a.size), data.CreationDate.String(),
+		data.LastModified.String(), data.StorageClass)
 }
 
 func sizeCalc(size int64, format string) float64 {
@@ -57,7 +57,7 @@ func print(writer io.Writer, result *Result, header string, format formatLine) {
 	fmt.Fprintln(w, header)
 
 	for _, object := range result.Objects {
-		fmt.Fprintln(w, format(*object))
+		fmt.Fprintln(w, format(object))
 	}
 	fmt.Fprintln(w)
 
