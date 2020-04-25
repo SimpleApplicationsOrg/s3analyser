@@ -8,9 +8,8 @@ before_install:
 
 script:
 - go test ./... -race -coverprofile=coverage.txt -covermode=atomic
-- cd cmd\s3analyser\
-- go build -tags netgo -a -v
-- GOOS=windows GOARCH=amd64 go build -tags netgo -a -v
+- go build -tags netgo -a -v ./cmd/s3analyser/
+- GOOS=windows GOARCH=amd64 go build -tags netgo -a -v ./cmd/s3analyser/
 
 after_success:
 - bash <(curl -s https://codecov.io/bash)
